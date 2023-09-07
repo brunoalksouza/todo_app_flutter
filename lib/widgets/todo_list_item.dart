@@ -8,6 +8,7 @@ class TodoListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      margin: const EdgeInsets.symmetric(vertical: 2),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(5),
         color: Colors.grey[200],
@@ -21,10 +22,6 @@ class TodoListItem extends StatelessWidget {
               children: [
                 Text(
                   '20/20/20',
-                  style: TextStyle(fontSize: 13),
-                ),
-                Text(
-                  'tarefaaaa',
                   style: TextStyle(fontSize: 13),
                 ),
               ],
