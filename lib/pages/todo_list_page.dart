@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:task_list_flutter/components/add_new_task.dart';
-import 'package:task_list_flutter/components/clear_task.dart';
+import 'package:task_list_flutter/widgets/todo_list_item.dart';
 
 class TodoListPage extends StatefulWidget {
   TodoListPage({super.key});
@@ -61,19 +60,35 @@ class _TodoListPageState extends State<TodoListPage> {
               SizedBox(
                 height: 20,
               ),
-              ListView(
-                shrinkWrap: true,
-                children: [
-                  for (String todo in todos)
-                    ListTile(
-                      title: Text(todo),
-                    ),
-                ],
+              Flexible(
+                child: ListView(
+                  shrinkWrap: true,
+                  children: [
+                    for (String todo in todos) TodoListItem(),
+                  ],
+                ),
               ),
               SizedBox(
                 height: 20,
               ),
-              ClearTasks()
+              Row(
+                children: [
+                  Expanded(
+                    child: Text('Você possui   tarefas pendentes'),
+                  ),
+                  SizedBox(
+                    width: 8,
+                  ),
+                  ElevatedButton(
+                    onPressed: () {},
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.deepPurple,
+                      padding: EdgeInsets.all(14),
+                    ),
+                    child: Text('Limpar tarefas'),
+                  )
+                ],
+              )
             ],
           ),
         ),
