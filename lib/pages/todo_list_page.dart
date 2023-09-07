@@ -64,7 +64,7 @@ class _TodoListPageState extends State<TodoListPage> {
                 child: ListView(
                   shrinkWrap: true,
                   children: [
-                    for (String todo in todos) TodoListItem(),
+                    for (String todo in todos) TodoListItem(title: todo),
                   ],
                 ),
               ),
