@@ -46,6 +46,7 @@ class _TodoListPageState extends State<TodoListPage> {
                           String text = todoController.text;
                           setState(() {
                             todos.add(text);
+                            todoController.clear();
                           });
                         },
                         style: ElevatedButton.styleFrom(
