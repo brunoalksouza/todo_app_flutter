@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:task_list_flutter/models/todo.dart';
 import 'package:task_list_flutter/widgets/todo_list_item.dart';
 
 class TodoListPage extends StatefulWidget {
@@ -13,7 +14,7 @@ class TodoListPage extends StatefulWidget {
 
 class _TodoListPageState extends State<TodoListPage> {
   final TextEditingController todoController = TextEditingController();
-  List<String> todos = [];
+  List<Todo> todos = [];
 
   @override
   Widget build(BuildContext context) {
@@ -31,9 +32,13 @@ class _TodoListPageState extends State<TodoListPage> {
                       flex: 4,
                       child: TextField(
                         controller: todoController,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.deepPurple),
+                          ),
                           border: OutlineInputBorder(),
                           labelText: 'Adicione uma tarefa',
+                          labelStyle: TextStyle(color: Colors.deepPurple),
                         ),
                       ),
                     ),
@@ -45,7 +50,11 @@ class _TodoListPageState extends State<TodoListPage> {
                         onPressed: () {
                           String text = todoController.text;
                           setState(() {
-                            todos.add(text);
+                            Todo newTodo = Todo(
+                              title: text,
+                              dateTime: DateTime.now(),
+                            );
+                            todos.add(newTodo);
                             todoController.clear();
                           });
                         },
@@ -68,7 +77,11 @@ class _TodoListPageState extends State<TodoListPage> {
                   child: ListView(
                     shrinkWrap: true,
                     children: [
-                      for (String todo in todos) TodoListItem(title: todo),
+                      for (Todo todo in todos)
+                        TodoListItem(
+                          todo: todo,
+                          onDelete: onDelete,
+                        ),
                     ],
                   ),
                 ),
@@ -105,5 +118,12 @@ class _TodoListPageState extends State<TodoListPage> {
         ),
       ),
     );
+  }
+
+  void onDelete(Todo todo) {
+    todos.remove(todo);
+    setState(() {
+      todos.remove(todo);
+    });
   }
 }
