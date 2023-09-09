@@ -11,21 +11,23 @@ class TodoListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Slidable(
-      actionPane: const SlidableStrechActionPane(),
-      actionExtentRatio: 0.25,
-      secondaryActions: [
-        IconSlideAction(
-          color: Colors.red,
-          icon: Icons.delete,
-          caption: 'Deletar',
-          onTap: () {
-            onDelete(todo);
-          },
-        )
-      ],
-      child: Padding(
-        padding: const EdgeInsets.all(3.0),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 2),
+      child: Slidable(
+        endActionPane: ActionPane(
+          motion: const StretchMotion(),
+          extentRatio: 0.21,
+          children: [
+            SlidableAction(
+              backgroundColor: Colors.red,
+              icon: Icons.delete,
+              onPressed: (context) {
+                onDelete(todo);
+              },
+              label: 'Deletar',
+            )
+          ],
+        ),
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(5),
@@ -36,13 +38,9 @@ class TodoListItem extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Row(
-                  children: [
-                    Text(
-                      DateFormat('dd/MM/yyyy - HH:mm').format(todo.dateTime),
-                      style: TextStyle(fontSize: 11),
-                    ),
-                  ],
+                Text(
+                  DateFormat('dd/MM/yyyy - HH:mm').format(todo.dateTime),
+                  style: TextStyle(fontSize: 11),
                 ),
                 Text(
                   todo.title,

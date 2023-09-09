@@ -15,6 +15,8 @@ class TodoListPage extends StatefulWidget {
 class _TodoListPageState extends State<TodoListPage> {
   final TextEditingController todoController = TextEditingController();
   List<Todo> todos = [];
+  Todo? deletedTodo;
+  int? deletedTodoPos;
 
   @override
   Widget build(BuildContext context) {
@@ -47,16 +49,8 @@ class _TodoListPageState extends State<TodoListPage> {
                     ),
                     Expanded(
                       child: ElevatedButton(
-                        onPressed: () {
-                          String text = todoController.text;
-                          setState(() {
-                            Todo newTodo = Todo(
-                              title: text,
-                              dateTime: DateTime.now(),
-                            );
-                            todos.add(newTodo);
-                            todoController.clear();
-                          });
+                        onPressed: () async {
+                          await onAdd();
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.deepPurple,
@@ -98,12 +92,7 @@ class _TodoListPageState extends State<TodoListPage> {
                       width: 8,
                     ),
                     ElevatedButton(
-                      onPressed: () {
-                        todos.clear();
-                        setState(() {
-                          todoController.text;
-                        });
-                      },
+                      onPressed: showDeletedTodosConfirmationDialog,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.deepPurple,
                         padding: EdgeInsets.all(14),
@@ -121,9 +110,89 @@ class _TodoListPageState extends State<TodoListPage> {
   }
 
   void onDelete(Todo todo) {
-    todos.remove(todo);
+    deletedTodo = todo;
+    deletedTodoPos = todos.indexOf(todo);
+
     setState(() {
       todos.remove(todo);
+    });
+
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          'Tarefa ${todo.title} foi removida com sucesso',
+          style: const TextStyle(color: Colors.black),
+        ),
+        action: SnackBarAction(
+          label: 'Desfazer',
+          textColor: Colors.deepPurple,
+          onPressed: () {
+            setState(() {
+              todos.insert(deletedTodoPos!, deletedTodo!);
+            });
+          },
+        ),
+        duration: const Duration(seconds: 3),
+        backgroundColor: Colors.white,
+      ),
+    );
+  }
+
+  void showDeletedTodosConfirmationDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Limpar todas as tarefas?'),
+        content: Text('Você tem certeza que deseja apagar todas as tarefas'),
+        actions: [
+          TextButton(
+            style: ButtonStyle(
+              overlayColor: MaterialStateColor.resolveWith(
+                  (states) => Colors.transparent),
+            ),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text(
+              'Cancelar',
+              style: TextStyle(color: Colors.blue),
+            ),
+          ),
+          TextButton(
+            style: ButtonStyle(
+              overlayColor: MaterialStateColor.resolveWith(
+                  (states) => Colors.transparent),
+            ),
+            onPressed: () {
+              deleteAllTodos();
+              Navigator.of(context).pop();
+            },
+            child: const Text(
+              'Limpar tudo',
+              style: TextStyle(color: Colors.red),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> onAdd() async {
+    String text = todoController.text;
+    setState(() {
+      Todo newTodo = Todo(
+        title: text,
+        dateTime: DateTime.now(),
+      );
+      todos.add(newTodo);
+      todoController.clear();
+    });
+  }
+
+  void deleteAllTodos() {
+    setState(() {
+      todos.clear();
     });
   }
 }
