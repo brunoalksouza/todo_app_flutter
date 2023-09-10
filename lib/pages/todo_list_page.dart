@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:task_list_flutter/models/todo.dart';
-import 'package:task_list_flutter/repositories/add_todos_container.dart';
 import 'package:task_list_flutter/repositories/styled_title.dart';
 import 'package:task_list_flutter/repositories/todo_repository.dart';
 import 'package:task_list_flutter/widgets/todo_list_item.dart';
@@ -48,8 +47,40 @@ class _TodoListPageState extends State<TodoListPage> {
                 ),
                 Row(
                   children: [
-                    AddTodosContainer(
-                        todoController: todoController, errorText: errorText),
+                    Expanded(
+                      flex: 4,
+                      child: TextField(
+                        onSubmitted: (value) {
+                          String text = todoController.text;
+                          if (text.isEmpty) {
+                            setState(() {
+                              errorText = 'A tarefa não pode ser vazia';
+                            });
+                            return;
+                          }
+                          setState(() {
+                            Todo newTodo = Todo(
+                              title: text,
+                              dateTime: DateTime.now(),
+                            );
+                            todos.add(newTodo);
+                            errorText = null;
+                          });
+                          todoController.clear();
+                          todoRepository.saveTodoList(todos);
+                        },
+                        controller: todoController,
+                        decoration: InputDecoration(
+                          focusedBorder: const OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.deepPurple),
+                          ),
+                          border: const OutlineInputBorder(),
+                          labelText: 'Adicione uma tarefa',
+                          labelStyle: const TextStyle(color: Colors.deepPurple),
+                          errorText: errorText,
+                        ),
+                      ),
+                    ),
                     const SizedBox(
                       width: 8,
                     ),
