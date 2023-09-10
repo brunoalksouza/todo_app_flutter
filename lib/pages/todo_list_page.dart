@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:task_list_flutter/models/todo.dart';
+import 'package:task_list_flutter/repositories/add_todos_container.dart';
+import 'package:task_list_flutter/repositories/styled_title.dart';
 import 'package:task_list_flutter/repositories/todo_repository.dart';
 import 'package:task_list_flutter/widgets/todo_list_item.dart';
 
@@ -40,23 +42,14 @@ class _TodoListPageState extends State<TodoListPage> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
+                const StyledTitle(),
+                const SizedBox(
+                  height: 18,
+                ),
                 Row(
                   children: [
-                    Expanded(
-                      flex: 4,
-                      child: TextField(
-                        controller: todoController,
-                        decoration: InputDecoration(
-                          focusedBorder: const OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.deepPurple),
-                          ),
-                          border: const OutlineInputBorder(),
-                          labelText: 'Adicione uma tarefa',
-                          labelStyle: const TextStyle(color: Colors.deepPurple),
-                          errorText: errorText,
-                        ),
-                      ),
-                    ),
+                    AddTodosContainer(
+                        todoController: todoController, errorText: errorText),
                     const SizedBox(
                       width: 8,
                     ),
@@ -64,14 +57,12 @@ class _TodoListPageState extends State<TodoListPage> {
                       child: ElevatedButton(
                         onPressed: () {
                           String text = todoController.text;
-
                           if (text.isEmpty) {
                             setState(() {
-                              errorText = 'O titulo não pode ser vazio';
+                              errorText = 'A tarefa não pode ser vazia';
                             });
                             return;
                           }
-
                           setState(() {
                             Todo newTodo = Todo(
                               title: text,
@@ -126,7 +117,7 @@ class _TodoListPageState extends State<TodoListPage> {
                       onPressed: showDeletedTodosConfirmationDialog,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.deepPurple,
-                        padding: EdgeInsets.all(14),
+                        padding: const EdgeInsets.all(14),
                       ),
                       child: const Text('Limpar tarefas'),
                     )
