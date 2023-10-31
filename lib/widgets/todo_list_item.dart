@@ -4,19 +4,38 @@ import 'package:intl/intl.dart';
 import 'package:task_list_flutter/models/todo.dart';
 
 class TodoListItem extends StatelessWidget {
-  const TodoListItem({super.key, required this.todo, required this.onDelete});
+  const TodoListItem(
+      {Key? key,
+      required this.todo,
+      required this.onDelete,
+      required this.onDone});
 
   final Todo todo;
   final Function(Todo) onDelete;
+  final Function(Todo) onDone;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 2),
       child: Slidable(
+        startActionPane: ActionPane(
+          motion: const StretchMotion(),
+          extentRatio: 0.25,
+          children: [
+            SlidableAction(
+              onPressed: (context) {
+                onDone(todo);
+              },
+              icon: Icons.check,
+              label: 'Concluir',
+              backgroundColor: const Color.fromARGB(255, 60, 148, 63),
+            ),
+          ],
+        ),
         endActionPane: ActionPane(
           motion: const StretchMotion(),
-          extentRatio: 0.21,
+          extentRatio: 0.25,
           children: [
             SlidableAction(
               backgroundColor: Colors.red,
@@ -25,13 +44,14 @@ class TodoListItem extends StatelessWidget {
                 onDelete(todo);
               },
               label: 'Deletar',
-            )
+            ),
           ],
         ),
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(5),
-            color: Colors.grey[200],
+            color:
+                todo.color, // Defina a cor de fundo com base na cor do "todo"
           ),
           child: Padding(
             padding: const EdgeInsets.all(10.0),
@@ -40,13 +60,14 @@ class TodoListItem extends StatelessWidget {
               children: [
                 Text(
                   DateFormat('dd/MM/yyyy - HH:mm').format(todo.dateTime),
-                  style: TextStyle(fontSize: 12),
+                  style: const TextStyle(fontSize: 12),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(left: 2, top: 4, bottom: 2),
                   child: Text(
                     todo.title,
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400),
+                    style: const TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.w400),
                   ),
                 ),
               ],

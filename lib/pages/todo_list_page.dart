@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:task_list_flutter/models/todo.dart';
 import 'package:task_list_flutter/repositories/styled_title.dart';
@@ -62,6 +64,7 @@ class _TodoListPageState extends State<TodoListPage> {
                             Todo newTodo = Todo(
                               title: text,
                               dateTime: DateTime.now(),
+                              isDone: false,
                             );
                             todos.add(newTodo);
                             errorText = null;
@@ -98,6 +101,7 @@ class _TodoListPageState extends State<TodoListPage> {
                             Todo newTodo = Todo(
                               title: text,
                               dateTime: DateTime.now(),
+                              isDone: false,
                             );
                             todos.add(newTodo);
                             errorText = null;
@@ -128,6 +132,7 @@ class _TodoListPageState extends State<TodoListPage> {
                         TodoListItem(
                           todo: todo,
                           onDelete: onDelete,
+                          onDone: onDone,
                         ),
                     ],
                   ),
@@ -160,6 +165,37 @@ class _TodoListPageState extends State<TodoListPage> {
         ),
       ),
     );
+  }
+
+  void onDone(Todo todo) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          'Tarefa ${todo.title} Concluída com sucesso',
+          style: const TextStyle(color: Colors.black),
+        ),
+        action: SnackBarAction(
+          label: 'Desfazer',
+          textColor: Colors.deepPurple,
+          onPressed: () {
+            setState(() {
+              todo.isDone = false;
+            });
+            todoRepository.saveTodoList(todos);
+          },
+        ),
+        duration: const Duration(seconds: 3),
+        backgroundColor: Colors.white,
+      ),
+    );
+
+    // Atualize a cor do "todo" para verde quando concluído
+    setState(() {
+      todo.isDone = true;
+      todo.color = Colors.green;
+    });
+
+    todoRepository.saveTodoList(todos);
   }
 
   void onDelete(Todo todo) {
